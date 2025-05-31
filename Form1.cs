@@ -1032,6 +1032,34 @@ namespace Home_assistant
             }
         }
 
-       
+        private void loadingOverlay1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void labelLoading_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tabClimate_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtChatHistory_TextChanged_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+
+        }
     }
 }

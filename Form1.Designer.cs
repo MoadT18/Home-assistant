@@ -670,35 +670,7 @@ namespace Home_assistant
 
         }
 
-        private void loadingOverlay1_Load(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void labelLoading_Click(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void tabClimate_Click(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void txtChatHistory_TextChanged_1(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
+     
 
         #endregion
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;

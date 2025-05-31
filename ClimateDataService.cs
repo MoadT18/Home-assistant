@@ -16,7 +16,7 @@ namespace Home_assistant
             _httpClient = new HttpClient();
         }
 
-        // ✅ Fix: Ensure FetchClimateData exists
+   
         public async Task<Dictionary<int, (double temperature, double co2, double humidity)>> FetchClimateData()
         {
             try
@@ -48,7 +48,7 @@ namespace Home_assistant
             }
         }
 
-        // ✅ Fix: Ensure FetchLatestClimateData exists
+  
         public async Task<(int id, double temperature, double co2, double humidity, string timestamp)> FetchLatestClimateData()
         {
             try

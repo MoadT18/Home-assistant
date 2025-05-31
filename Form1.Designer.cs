@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Home_assistant
@@ -62,6 +63,7 @@ namespace Home_assistant
             this.btnHumidity = new Home_assistant.RoundButton();
             this.btnAirQuality = new Home_assistant.RoundButton();
             this.panelChartContainer = new System.Windows.Forms.Panel();
+            this.labelLoading = new System.Windows.Forms.Label();
             this.chartClimate = new LiveCharts.WinForms.CartesianChart();
             this.chartTitle = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -546,6 +548,7 @@ namespace Home_assistant
             // 
             this.panelChartContainer.BackColor = System.Drawing.Color.White;
             this.panelChartContainer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelChartContainer.Controls.Add(this.labelLoading);
             this.panelChartContainer.Controls.Add(this.chartClimate);
             this.panelChartContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelChartContainer.Location = new System.Drawing.Point(223, 3);
@@ -553,6 +556,19 @@ namespace Home_assistant
             this.panelChartContainer.Padding = new System.Windows.Forms.Padding(15);
             this.panelChartContainer.Size = new System.Drawing.Size(822, 482);
             this.panelChartContainer.TabIndex = 0;
+            // 
+            // labelLoading
+            // 
+            this.labelLoading.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelLoading.AutoSize = true;
+            this.labelLoading.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelLoading.Location = new System.Drawing.Point(324, 402);
+            this.labelLoading.Name = "labelLoading";
+            this.labelLoading.Size = new System.Drawing.Size(151, 32);
+            this.labelLoading.TabIndex = 14;
+            this.labelLoading.Text = "Loading...";
+            this.labelLoading.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.labelLoading.Click += new System.EventHandler(this.labelLoading_Click);
             // 
             // chartClimate
             // 
@@ -648,9 +664,40 @@ namespace Home_assistant
             this.panel1.ResumeLayout(false);
             this.layoutButtons.ResumeLayout(false);
             this.panelChartContainer.ResumeLayout(false);
+            this.panelChartContainer.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.ResumeLayout(false);
 
+        }
+
+        private void loadingOverlay1_Load(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void labelLoading_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void tabClimate_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void txtChatHistory_TextChanged_1(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
@@ -702,6 +749,7 @@ namespace Home_assistant
         private TableLayoutPanel layoutChatMain;
         private TableLayoutPanel layoutChatInput;
         private RichTextBox txtChatHistory;
+        private Label labelLoading;
     }
 }
 

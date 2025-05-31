@@ -12,6 +12,12 @@ using System.Net.Http;
 using System.Drawing;
 
 using System.IO;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf;
+using PdfSharp.Drawing;
+using PdfSharp.Fonts;
+
 
 namespace Home_assistant
 {
@@ -30,7 +36,7 @@ namespace Home_assistant
 
         private readonly List<string> alertHistory = new List<string>();
 
-        // 1) Class‐level veld en helper–methode
+
         private bool hasUnreadAlerts = false;
 
         private void UpdateAlertIcon()
@@ -42,39 +48,80 @@ namespace Home_assistant
         public Form1()
         {
             InitializeComponent();
+            SetupPdfFonts();
+
             climateService = new ClimateDataService();
             aiService = new AIResponseService();
-            FetchClimateData();
 
-            // Initialize chart
-            chartClimate.Series = new SeriesCollection();
-            chartClimate.AxisX.Add(new Axis { Title = "Time", Labels = new List<string>() });
-            chartClimate.AxisY.Add(new Axis { Title = "Measurements", MinValue = 0 });
-
-            chartClimate.AxisX.Add(new Axis { Title = "Measurement Time" });
-            chartClimate.AxisY.Add(new Axis { Title = "Values" });
+            ShowLoadingChart();
+            chartClimate.Refresh();
+            labelLoading.Visible = true;
+            chartClimate.Visible = false;
+            this.Load += async (s, e) => await OnFormLoadAsync();
 
 
 
-            // 1) Set up NotifyIcon (you’ll need an Icon resource)
+
+
+
+
             notifyIcon = new NotifyIcon
             {
-                Icon = SystemIcons.Warning,  // or your custom .ico
+                Icon = SystemIcons.Warning,
                 Visible = true,
                 BalloonTipTitle = "CO₂ Warning"
             };
 
-            // 2) Set up a 5s Timer to poll the API
+            // Set up a 5s Timer to poll the API
             thresholdTimer = new Timer { Interval = 5000 };
             thresholdTimer.Tick += ThresholdTimer_Tick;
             thresholdTimer.Start();
 
-            // 2) In Form1() na InitializeComponent():
+
             UpdateAlertIcon();
 
         }
 
-        private async void FetchClimateData()
+        private void ShowLoadingChart()
+        {
+            chartClimate.Series = new SeriesCollection
+    {
+        new LineSeries
+        {
+            Title = "Loading...",
+            Values = new ChartValues<double> { 0, 0, 0, 0, 0 },
+            StrokeThickness = 2,
+            PointGeometry = null,
+            Stroke = System.Windows.Media.Brushes.Gray,
+            Fill = System.Windows.Media.Brushes.Transparent
+        }
+    };
+
+            chartClimate.AxisX.Clear();
+            chartClimate.AxisX.Add(new Axis
+            {
+                Labels = new[] { "", "", "", "", "" },
+                Foreground = System.Windows.Media.Brushes.Gray
+            });
+
+            chartClimate.AxisY.Clear();
+            chartClimate.AxisY.Add(new Axis
+            {
+                MinValue = 0,
+                MaxValue = 100,
+                Foreground = System.Windows.Media.Brushes.Gray
+            });
+        }
+
+        private async Task OnFormLoadAsync()
+        {
+            await FetchClimateData();
+
+            labelLoading.Visible = false;
+            chartClimate.Visible = true;
+        }
+
+        private async Task FetchClimateData()
         {
             var dataDict = await climateService.FetchClimateData();
             if (dataDict == null || dataDict.Count == 0)
@@ -100,7 +147,7 @@ namespace Home_assistant
                 else
                 {
                     temperatureValues.Add(0);
-                    co2Values.Add(0); // Baseline CO₂
+                    co2Values.Add(0); 
                     humidityValues.Add(0);
                 }
             }
@@ -172,18 +219,16 @@ namespace Home_assistant
         {
             try
             {
-                // Laat de spinner zien
+                
                 loadingOverlay1.ShowOverlay();
 
-                // Haal data op
+                
                 var (id, temperature, co2, humidity, timestamp)
                     = await climateService.FetchLatestClimateData();
                 string formattedTime
                     = DateTime.Parse(timestamp).ToString("dd-MM-yyyy HH:mm");
 
-              /*  string prompt
-                    = $"Provide only the current temperature and the exact time it was measured. " +
-                      $"The last measurement was at {formattedTime}, with temperature: {temperature}°C.";*/
+             
 
                 // Your prompt in blue, "You:" bold
                 txtChatHistory.SelectionStart = txtChatHistory.TextLength;
@@ -194,9 +239,6 @@ namespace Home_assistant
                 txtChatHistory.AppendText(" " + "What is my temperature right now?" + Environment.NewLine);
                 txtChatHistory.SelectionColor = txtChatHistory.ForeColor;
 
-                // Get AI response
-/*                string response = await aiService.GetAIResponse(prompt);
-*/
                 // Luna’s response in green, "Luna:" bold
                 txtChatHistory.SelectionStart = txtChatHistory.TextLength;
                 txtChatHistory.SelectionColor = Color.Green;
@@ -206,7 +248,7 @@ namespace Home_assistant
                 txtChatHistory.AppendText(" " + $"📍 Last Measured at: {formattedTime}\n🌡 Temperature: {temperature}°C" + Environment.NewLine);
                 txtChatHistory.SelectionColor = txtChatHistory.ForeColor;
 
-                // Scroll naar beneden
+              
                 txtChatHistory.ScrollToCaret();
 
                 // Toon resultaat in MessageBox
@@ -224,7 +266,7 @@ namespace Home_assistant
             }
             finally
             {
-                // Verberg de spinner
+                
                 loadingOverlay1.HideOverlay();
             }
         }
@@ -241,8 +283,7 @@ namespace Home_assistant
                 string formattedTime = DateTime.Parse(timestamp)
                                           .ToString("dd-MM-yyyy HH:mm");
 
-                //string prompt = $"Provide only the current CO₂ level and the exact time it was measured. " +
-                               // $"The last measurement was at {formattedTime}, with CO₂ level: {co2} ppm.";
+               
 
                 // Your prompt in blue, "You:" bold
                 txtChatHistory.SelectionStart = txtChatHistory.TextLength;
@@ -253,8 +294,6 @@ namespace Home_assistant
                 txtChatHistory.AppendText(" " + "What is my co2 right now?" + Environment.NewLine);
                 txtChatHistory.SelectionColor = txtChatHistory.ForeColor;
 
-                // Get AI response
-                //string response = await aiService.GetAIResponse(prompt);
 
                 // Luna’s response in green, "Luna:" bold
                 txtChatHistory.SelectionStart = txtChatHistory.TextLength;
@@ -265,10 +304,8 @@ namespace Home_assistant
                 txtChatHistory.AppendText(" " + $"📍 Last Measured at: {formattedTime}\n🌿 CO₂ Level: {co2} ppm" + Environment.NewLine);
                 txtChatHistory.SelectionColor = txtChatHistory.ForeColor;
 
-                // Scroll to bottom
                 txtChatHistory.ScrollToCaret();
 
-                // Show message box as before
                 MessageBox.Show(
                     $"📍 Last Measured at: {formattedTime}\n🌿 CO₂ Level: {co2} ppm",
                     "Indoor Air Quality", MessageBoxButtons.OK, MessageBoxIcon.Information
@@ -301,9 +338,7 @@ namespace Home_assistant
                 string formattedTime = DateTime.Parse(timestamp)
                                           .ToString("dd-MM-yyyy HH:mm");
 
-               /* string prompt = $"Provide only the current humidity percentage and the exact time it was measured. " +
-                                $"The last measurement was at {formattedTime}, with humidity: {humidity}%.";
-*/
+             
                 // Your prompt in blue, "You:" bold
                 txtChatHistory.SelectionStart = txtChatHistory.TextLength;
                 txtChatHistory.SelectionColor = Color.Blue;
@@ -313,9 +348,7 @@ namespace Home_assistant
                 txtChatHistory.AppendText(" " + "What is my humidity right now?" + Environment.NewLine);
                 txtChatHistory.SelectionColor = txtChatHistory.ForeColor;
 
-                // Get AI response
-/*                string response = await aiService.GetAIResponse(prompt);
-*/
+               
                 // Luna’s response in green, "Luna:" bold
                 txtChatHistory.SelectionStart = txtChatHistory.TextLength;
                 txtChatHistory.SelectionColor = Color.Green;
@@ -325,10 +358,8 @@ namespace Home_assistant
                 txtChatHistory.AppendText(" " + $"📍 Last Measured at: {formattedTime}\n💧 Humidity: {humidity}%" + Environment.NewLine);
                 txtChatHistory.SelectionColor = txtChatHistory.ForeColor;
 
-                // Scroll to bottom
                 txtChatHistory.ScrollToCaret();
 
-                // Show message box as before
                 MessageBox.Show(
                     $"📍 Last Measured at: {formattedTime}\n💧 Humidity: {humidity}%",
                     "Humidity Data", MessageBoxButtons.OK, MessageBoxIcon.Information
@@ -352,18 +383,22 @@ namespace Home_assistant
 
         private async void btnGeneralAnalysis_Click(object sender, EventArgs e)
         {
+            string formattedTime = "";
+            double co2 = 0, temperature = 0, humidity = 0;
+            string response = "";
+
             try
             {
                 loadingOverlay1.ShowOverlay();
 
-                var (id, temperature, co2, humidity, timestamp)
-                    = await climateService.FetchLatestClimateData();
-                string formattedTime = DateTime.Parse(timestamp)
-                                          .ToString("dd-MM-yyyy HH:mm");
+                var (id, temp, co2Val, humVal, timestamp) = await climateService.FetchLatestClimateData();
+                temperature = temp;
+                co2 = co2Val;
+                humidity = humVal;
+                formattedTime = DateTime.Parse(timestamp).ToString("dd-MM-yyyy HH:mm");
 
-                string prompt = "Please analyze today’s indoor air quality based on all measurements collected throughout the day. For each parameter (temperature, humidity, and CO₂), summarize the trend or average, and explain whether the values were mostly ideal, too high, or too low. Always refer to specific times using the hh:mm format (e.g., 14:00 or 09:30), not general terms like 'midday' or 'early morning'. Then provide clear, personalized recommendations to improve air quality and comfort.";
+                string prompt = "Analyze today’s indoor air quality using all measurements. For temperature, humidity, and CO₂, summarize the trend or average, and note if values were mostly ideal, too high, or too low. Use exact times (hh:mm), not vague terms like 'midday'. Provide clear, personalized tips to improve comfort and air quality. Do not use any bold formatting!";
 
-                // Your prompt in blue, "You:" bold
                 txtChatHistory.SelectionStart = txtChatHistory.TextLength;
                 txtChatHistory.SelectionColor = Color.Blue;
                 txtChatHistory.SelectionFont = new Font(txtChatHistory.Font, FontStyle.Bold);
@@ -372,10 +407,8 @@ namespace Home_assistant
                 txtChatHistory.AppendText(" " + prompt + Environment.NewLine);
                 txtChatHistory.SelectionColor = txtChatHistory.ForeColor;
 
-                // Get AI response
-                string response = await aiService.GetAIResponse(prompt);
+                response = await aiService.GetAIResponse(prompt);
 
-                // Luna’s response in green, "Luna:" bold
                 txtChatHistory.SelectionStart = txtChatHistory.TextLength;
                 txtChatHistory.SelectionColor = Color.Green;
                 txtChatHistory.SelectionFont = new Font(txtChatHistory.Font, FontStyle.Bold);
@@ -384,17 +417,35 @@ namespace Home_assistant
                 txtChatHistory.AppendText(" " + response + Environment.NewLine);
                 txtChatHistory.SelectionColor = txtChatHistory.ForeColor;
 
-                // Scroll to bottom
                 txtChatHistory.ScrollToCaret();
 
-                // Show detailed analysis
-                string formattedMessage = $"🧠 **Luna's Climate Analysis**\n\n" +
-                                          $"📍 Measured at: {formattedTime}\n\n" +
+                string formattedMessage = $"🧠 Luna's Climate Analysis\n\n" +
+                                          $"📍 Last Measured at: {formattedTime}\n\n" +
                                           $"🌿 CO₂ Level: {co2} ppm\n" +
                                           $"🌡 Temperature: {temperature}°C\n" +
                                           $"💧 Humidity: {humidity}%\n\n" +
-                                          $"📋 **AI Advice:**\n{response}";
+                                          $"📋 AI Advice:\n{response}";
                 MessageBox.Show(formattedMessage, "General Analysis", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // PDF Opslaan
+                using (SaveFileDialog saveDialog = new SaveFileDialog())
+                {
+                    saveDialog.Filter = "PDF files (*.pdf)|*.pdf";
+                    saveDialog.FileName = "Daily_Climate_Analysis_" + DateTime.Now.ToString("yyyyMMdd") + ".pdf";
+
+                    if (saveDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        GenerateGeneralAnalysisPdf(
+                            formattedTime,
+                            co2,
+                            temperature,
+                            humidity,
+                            response,
+                            saveDialog.FileName
+                        );
+                        MessageBox.Show("PDF successfully saved!", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -469,22 +520,24 @@ namespace Home_assistant
                 return "Error: " + ex.Message;
             }
         }
-        private void label1_Click(object sender, EventArgs e)
+       
+
+        
+
+       
+
+        private void SetupPdfFonts()
         {
-            // This method is required but can be left empty if no functionality is needed.
+            // Enable Windows fonts for PdfSharp Core build
+            try
+            {
+                GlobalFontSettings.UseWindowsFontsUnderWindows = true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Could not set Windows fonts: {ex.Message}");
+            }
         }
-
-        private void cartesianChart1_ChildChanged(object sender, System.Windows.Forms.Integration.ChildChangedEventArgs e)
-        {
-            // This method is required but can be left empty if no functionality is needed.
-        }
-
-        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-
-        }
-
-
 
         private async void btnForecastAdvice_Click(object sender, EventArgs e)
         {
@@ -494,20 +547,15 @@ namespace Home_assistant
 
                 string forecastPrompt = "What’s the forecast advice for the coming days?";
 
-                // Your prompt in blue, "You:" bold
+                string response = await aiService.GetAIResponse(forecastPrompt);
+
                 txtChatHistory.SelectionStart = txtChatHistory.TextLength;
                 txtChatHistory.SelectionColor = Color.Blue;
                 txtChatHistory.SelectionFont = new Font(txtChatHistory.Font, FontStyle.Bold);
                 txtChatHistory.AppendText("You:");
                 txtChatHistory.SelectionFont = new Font(txtChatHistory.Font, FontStyle.Regular);
                 txtChatHistory.AppendText(" " + forecastPrompt + Environment.NewLine);
-                txtChatHistory.SelectionColor = txtChatHistory.ForeColor;
 
-                // Get AI response
-                string response = await aiService.GetAIResponse(forecastPrompt);
-
-                // Luna’s response in green, "Luna:" bold
-                txtChatHistory.SelectionStart = txtChatHistory.TextLength;
                 txtChatHistory.SelectionColor = Color.Green;
                 txtChatHistory.SelectionFont = new Font(txtChatHistory.Font, FontStyle.Bold);
                 txtChatHistory.AppendText("Luna:");
@@ -515,11 +563,22 @@ namespace Home_assistant
                 txtChatHistory.AppendText(" " + response + Environment.NewLine);
                 txtChatHistory.SelectionColor = txtChatHistory.ForeColor;
 
-                // Scroll to bottom
                 txtChatHistory.ScrollToCaret();
 
-                // Show forecast advice
                 MessageBox.Show(response, "7-Day Forecast Advice", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                //Download als PDF
+                using (SaveFileDialog saveDialog = new SaveFileDialog())
+                {
+                    saveDialog.Filter = "PDF files (*.pdf)|*.pdf";
+                    saveDialog.FileName = "IndoorForecast_" + DateTime.Now.ToString("yyyyMMdd") + ".pdf";
+
+                    if (saveDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        GenerateForecastPdf(response, saveDialog.FileName);
+                        MessageBox.Show("PDF successfully saved!", "Saved", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -534,7 +593,249 @@ namespace Home_assistant
 
 
 
-        // 3) ThresholdTimer_Tick
+        private void GenerateForecastPdf(string content, string filePath)
+        {
+            try
+            {
+                SetupPdfFonts();
+
+                PdfDocument document = new PdfDocument();
+                document.Info.Title = "7-Day Indoor Forecast";
+
+                PdfPage page = document.AddPage();
+                XGraphics gfx = XGraphics.FromPdfPage(page);
+
+                XFont titleFont = new XFont("Arial", 16, XFontStyleEx.Bold);
+                XFont bodyFont = new XFont("Arial", 12, XFontStyleEx.Regular);
+                XFont boldFont = new XFont("Arial", 12, XFontStyleEx.Bold);
+
+                double margin = 40;
+                double y = margin;
+                double lineHeight = 18;
+
+                gfx.DrawString("7-Day Forecast Advice", titleFont, XBrushes.DarkBlue,
+                    new XRect(margin, y, page.Width - 2 * margin, 40), XStringFormats.TopLeft);
+                y += 50;
+
+                gfx.DrawString($"Generated on: {DateTime.Now:dd/MM/yyyy HH:mm}", bodyFont, XBrushes.Gray,
+                    new XRect(margin, y, page.Width - 2 * margin, 20), XStringFormats.TopLeft);
+                y += 30;
+
+                string[] dayBlocks = content.Split(new[] { "Date: " }, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var block in dayBlocks)
+                {
+                    if (y > page.Height - margin - 100)
+                    {
+                        page = document.AddPage();
+                        gfx = XGraphics.FromPdfPage(page);
+                        y = margin;
+                    }
+
+                    string trimmed = block.Trim();
+                    if (string.IsNullOrWhiteSpace(trimmed)) continue;
+
+                    string[] lines = trimmed.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                    string dateLine = lines[0].Trim();
+                    string forecastLine = "";
+                    string adviceLine = "";
+
+                    foreach (string l in lines.Skip(1))
+                    {
+                        if (l.StartsWith("Forecast:"))
+                            forecastLine = l.Replace("Forecast:", "").Trim();
+                        else if (l.StartsWith("Advice:"))
+                            adviceLine += l.Replace("Advice:", "").Trim() + " ";
+                        else
+                            adviceLine += l.Trim() + " ";
+                    }
+
+                    y = DrawWrappedLabelValue(gfx, page, "Date:", dateLine, boldFont, bodyFont, margin, y);
+                    y = DrawWrappedLabelValue(gfx, page, "Forecast:", forecastLine, boldFont, bodyFont, margin, y);
+                    y = DrawWrappedLabelValue(gfx, page, "Advice:", adviceLine.Trim(), boldFont, bodyFont, margin, y);
+                    y += 20;
+                }
+
+                document.Save(filePath);
+                document.Close();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"PDF Generation failed: {ex.Message}", ex);
+            }
+        }
+
+
+
+        // Helper method for text wrapping
+        private List<string> WrapText(string text, int maxLength)
+        {
+            var lines = new List<string>();
+            var words = text.Split(' ');
+            var currentLine = "";
+
+            foreach (var word in words)
+            {
+                if ((currentLine + " " + word).Trim().Length <= maxLength)
+                {
+                    currentLine += (currentLine.Length > 0 ? " " : "") + word;
+                }
+                else
+                {
+                    lines.Add(currentLine);
+                    currentLine = word;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(currentLine))
+                lines.Add(currentLine);
+
+            return lines;
+        }
+
+
+        private double DrawWrappedLabelValue(XGraphics gfx, PdfPage page, string label, string value, XFont labelFont, XFont valueFont, double margin, double y)
+        {
+            double lineHeight = 18;
+            double availableWidth = page.Width - 2 * margin;
+
+            gfx.DrawString(label, labelFont, XBrushes.Black,
+                new XRect(margin, y, availableWidth, lineHeight), XStringFormats.TopLeft);
+            y += lineHeight;
+
+            var wrappedLines = WrapText(value, 100);
+            foreach (var line in wrappedLines)
+            {
+                gfx.DrawString(line, valueFont, XBrushes.Black,
+                    new XRect(margin + 10, y, availableWidth - 10, lineHeight), XStringFormats.TopLeft);
+                y += lineHeight;
+            }
+
+            return y + 5;
+        }
+
+        private void GenerateGeneralAnalysisPdf(string timestamp, double co2, double temp, double humidity, string aiAdvice, string filePath)
+        {
+            try
+            {
+                SetupPdfFonts();
+
+                PdfDocument document = new PdfDocument();
+                document.Info.Title = "Luna's Daily Climate Analysis";
+
+                PdfPage page = document.AddPage();
+                XGraphics gfx = XGraphics.FromPdfPage(page);
+
+                XFont titleFont = new XFont("Arial", 16, XFontStyleEx.Bold);
+                XFont labelFont = new XFont("Arial", 12, XFontStyleEx.Bold);
+                XFont valueFont = new XFont("Arial", 12, XFontStyleEx.Regular);
+
+                double margin = 40;
+                double y = margin;
+                double lineHeight = 18;
+                double availableWidth = page.Width - 2 * margin;
+
+                gfx.DrawString("Luna’s Climate Analysis", titleFont, XBrushes.DarkBlue,
+                    new XRect(margin, y, availableWidth, lineHeight), XStringFormats.TopLeft);
+                y += 40;
+
+                y = DrawWrappedLabelValue(gfx, page, "Last Measured at:", timestamp, labelFont, valueFont, margin, y);
+                y = DrawWrappedLabelValue(gfx, page, "CO₂ Level:", co2 + " ppm", labelFont, valueFont, margin, y);
+                y = DrawWrappedLabelValue(gfx, page, "Temperature:", temp.ToString("0.00") + "°C", labelFont, valueFont, margin, y);
+                y = DrawWrappedLabelValue(gfx, page, "Humidity:", humidity.ToString("0.00") + "%", labelFont, valueFont, margin, y);
+
+                y += 10;
+                y = DrawWrappedLabelValue(gfx, page, "AI Advice:", "", labelFont, valueFont, margin, y);
+
+                var adviceLines = aiAdvice.Split(new[] { "\n", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var line in adviceLines)
+                {
+                    string trimmed = line.Trim();
+
+                    if (trimmed.ToLower().Contains("tips"))
+                    {
+                        y += 10;
+                    }
+
+                    bool isSectionTitle =
+                        (trimmed.EndsWith(":") && trimmed.Length < 40 && !trimmed.StartsWith("-") &&
+                         !trimmed.Contains(".") && !trimmed.Contains("•") && char.IsUpper(trimmed[0]))
+                        || trimmed.StartsWith("1.") || trimmed.StartsWith("2.") || trimmed.StartsWith("3.") || trimmed.StartsWith("4.");
+
+                    if (isSectionTitle)
+                    {
+                        y += 10;
+
+                        if (y > page.Height - margin - lineHeight)
+                        {
+                            page = document.AddPage();
+                            gfx = XGraphics.FromPdfPage(page);
+                            y = margin;
+                        }
+
+                        if (trimmed.Contains(":") && trimmed.Length > 3 && trimmed[1] == '.' && char.IsDigit(trimmed[0]))
+                        {
+                            int colonIndex = trimmed.IndexOf(":");
+                            string boldPart = trimmed.Substring(0, colonIndex + 1); // incl. :
+                            string normalPart = trimmed.Substring(colonIndex + 1).Trim();
+
+                            gfx.DrawString(boldPart, labelFont, XBrushes.Black,
+                                new XRect(margin, y, availableWidth, lineHeight), XStringFormats.TopLeft);
+                            y += lineHeight;
+
+                            var wrappedLines = WrapText(normalPart, 100);
+                            foreach (var linePart in wrappedLines)
+                            {
+                                gfx.DrawString(linePart, valueFont, XBrushes.Black,
+                                    new XRect(margin + 10, y, availableWidth - 10, lineHeight), XStringFormats.TopLeft);
+                                y += lineHeight;
+                            }
+
+                            y += 6;
+                        }
+                        else
+                        {
+                            gfx.DrawString(trimmed, labelFont, XBrushes.Black,
+                                new XRect(margin, y, availableWidth, lineHeight), XStringFormats.TopLeft);
+                            y += lineHeight;
+                        }
+                    }
+                    else
+                    {
+                        var wrappedLines = WrapText(trimmed, 100);
+                        foreach (var wrappedLine in wrappedLines)
+                        {
+                            if (y > page.Height - margin - lineHeight)
+                            {
+                                page = document.AddPage();
+                                gfx = XGraphics.FromPdfPage(page);
+                                y = margin;
+                            }
+
+                            gfx.DrawString(wrappedLine, valueFont, XBrushes.Black,
+                                new XRect(margin + 10, y, availableWidth - 10, lineHeight), XStringFormats.TopLeft);
+                            y += lineHeight;
+                        }
+
+                        y += 6;
+                    }
+                }
+
+                document.Save(filePath);
+                document.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("PDF generation failed: " + ex.Message);
+            }
+        }
+
+
+
+
+
+
+        // ThresholdTimer_Tick
         private async void ThresholdTimer_Tick(object sender, EventArgs e)
         {
             try
@@ -557,10 +858,10 @@ namespace Home_assistant
                     lastDataId = id;
                 }
             }
-            catch { /* ignore */ }
+            catch { }
         }
 
-        // 4) btnViewAlerts_Click
+        // btnViewAlerts_Click
         private void btnViewAlerts_Click(object sender, EventArgs e)
         {
             panelAlertDropdown.Visible = !panelAlertDropdown.Visible;
@@ -595,7 +896,6 @@ namespace Home_assistant
 
         private async void measure_Click(object sender, EventArgs e)
         {
-            // Maak textbox schoon voor nieuwe run
             cronTextBox.Clear();
 
             try
@@ -621,7 +921,6 @@ namespace Home_assistant
 
         private async void forecast_Click(object sender, EventArgs e)
         {
-            // Maak textbox schoon voor nieuwe run
             cronTextBox.Clear();
 
             try
@@ -645,25 +944,6 @@ namespace Home_assistant
             }
         }
 
-        private void loadingOverlay1_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tabClimate_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void txtChatHistory_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void txtChatHistory_TextChanged_1(object sender, EventArgs e)
-        {
-
-        }
 
         private async void bttnweatherToday_Click(object sender, EventArgs e)
         {
@@ -694,10 +974,8 @@ namespace Home_assistant
                 txtChatHistory.AppendText(" " + response + Environment.NewLine);
                 txtChatHistory.SelectionColor = txtChatHistory.ForeColor;
 
-                // Scroll to bottom
                 txtChatHistory.ScrollToCaret();
 
-                // Show forecast advice
                 MessageBox.Show(response, "Weather update", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
@@ -708,8 +986,8 @@ namespace Home_assistant
             {
                 loadingOverlay1.HideOverlay();
             }
-        
-    }
+
+        }
 
         private async void bttnweatherTomorrow_Click(object sender, EventArgs e)
         {
@@ -740,10 +1018,8 @@ namespace Home_assistant
                 txtChatHistory.AppendText(" " + response + Environment.NewLine);
                 txtChatHistory.SelectionColor = txtChatHistory.ForeColor;
 
-                // Scroll to bottom
                 txtChatHistory.ScrollToCaret();
 
-                // Show forecast advice
                 MessageBox.Show(response, "Weather update", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
@@ -756,9 +1032,6 @@ namespace Home_assistant
             }
         }
 
-        private void layoutButtons_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
+       
     }
 }

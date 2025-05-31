@@ -16,7 +16,15 @@ namespace Home_assistant
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            var privacyForm = new PrivacyPolicyForm();
+            Application.Run(privacyForm);
+
+            if (!privacyForm.IsAccepted)
+                return;
+
             Application.Run(new Form1());
         }
+
     }
 }

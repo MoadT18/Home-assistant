@@ -23,14 +23,16 @@ namespace Home_assistant
 {
     public partial class Form1 : Form
     {
-        private readonly ClimateDataService climateService;
+        private readonly ClimateDataService climateService; 
         private readonly AIResponseService aiService;
         private readonly Timer thresholdTimer;
         private readonly NotifyIcon notifyIcon;
         private bool hasAlerted = false;
-        private const int CO2_THRESHOLD = 1000;
+        private const int CO2_THRESHOLD = 900;
         private Panel panelAlertDropdown1;
         private ListBox lstAlerts1;
+        private readonly Timer forecastTimer;
+
 
         private int lastDataId = -1;
 
@@ -77,6 +79,14 @@ namespace Home_assistant
             thresholdTimer.Tick += ThresholdTimer_Tick;
             thresholdTimer.Start();
 
+
+            // Forecast waarschuwing bij opstart + om de 2 uur
+            forecastTimer = new Timer { Interval = 2 * 60 * 60 * 1000 }; // 2 uur in ms
+            forecastTimer.Tick += async (s, e) => await CheckForecastWarnings();
+            forecastTimer.Start();
+
+            // Run onmiddellijk bij opstart
+            _ = CheckForecastWarnings();
 
             UpdateAlertIcon();
 
@@ -147,7 +157,7 @@ namespace Home_assistant
                 else
                 {
                     temperatureValues.Add(0);
-                    co2Values.Add(0); 
+                    co2Values.Add(0);
                     humidityValues.Add(0);
                 }
             }
@@ -213,22 +223,51 @@ namespace Home_assistant
                 Foreground = System.Windows.Media.Brushes.Red,
                 FontSize = 12
             });
+
+            // Advisory line for temperature (25°C)
+            chartClimate.AxisY[0].Sections = new SectionsCollection
+{
+    new AxisSection
+    {
+        Value = 25,
+        Stroke = System.Windows.Media.Brushes.Blue,
+        StrokeThickness = 2,
+        StrokeDashArray = new System.Windows.Media.DoubleCollection { 4 },
+        SectionWidth = 0,
+        Label = "Comfort Max Temp"
+    }
+};
+
+            // Advisory line for CO2 (1000 ppm)
+            chartClimate.AxisY[1].Sections = new SectionsCollection
+{
+    new AxisSection
+    {
+        Value = 1000,
+        Stroke = System.Windows.Media.Brushes.Red,
+        StrokeThickness = 2,
+        StrokeDashArray = new System.Windows.Media.DoubleCollection { 4 },
+        SectionWidth = 0,
+        Label = "CO₂ Limit"
+    }
+};
+
         }
 
         private async void btnTemperature_Click(object sender, EventArgs e)
         {
             try
             {
-                
+
                 loadingOverlay1.ShowOverlay();
 
-                
+
                 var (id, temperature, co2, humidity, timestamp)
                     = await climateService.FetchLatestClimateData();
                 string formattedTime
                     = DateTime.Parse(timestamp).ToString("dd-MM-yyyy HH:mm");
 
-             
+
 
                 // Your prompt in blue, "You:" bold
                 txtChatHistory.SelectionStart = txtChatHistory.TextLength;
@@ -248,7 +287,7 @@ namespace Home_assistant
                 txtChatHistory.AppendText(" " + $"📍 Last Measured at: {formattedTime}\n🌡 Temperature: {temperature}°C" + Environment.NewLine);
                 txtChatHistory.SelectionColor = txtChatHistory.ForeColor;
 
-              
+
                 txtChatHistory.ScrollToCaret();
 
                 // Toon resultaat in MessageBox
@@ -266,7 +305,7 @@ namespace Home_assistant
             }
             finally
             {
-                
+
                 loadingOverlay1.HideOverlay();
             }
         }
@@ -283,7 +322,7 @@ namespace Home_assistant
                 string formattedTime = DateTime.Parse(timestamp)
                                           .ToString("dd-MM-yyyy HH:mm");
 
-               
+
 
                 // Your prompt in blue, "You:" bold
                 txtChatHistory.SelectionStart = txtChatHistory.TextLength;
@@ -338,7 +377,7 @@ namespace Home_assistant
                 string formattedTime = DateTime.Parse(timestamp)
                                           .ToString("dd-MM-yyyy HH:mm");
 
-             
+
                 // Your prompt in blue, "You:" bold
                 txtChatHistory.SelectionStart = txtChatHistory.TextLength;
                 txtChatHistory.SelectionColor = Color.Blue;
@@ -348,7 +387,7 @@ namespace Home_assistant
                 txtChatHistory.AppendText(" " + "What is my humidity right now?" + Environment.NewLine);
                 txtChatHistory.SelectionColor = txtChatHistory.ForeColor;
 
-               
+
                 // Luna’s response in green, "Luna:" bold
                 txtChatHistory.SelectionStart = txtChatHistory.TextLength;
                 txtChatHistory.SelectionColor = Color.Green;
@@ -520,11 +559,11 @@ namespace Home_assistant
                 return "Error: " + ex.Message;
             }
         }
-       
 
-        
 
-       
+
+
+
 
         private void SetupPdfFonts()
         {
@@ -842,24 +881,31 @@ namespace Home_assistant
             {
                 var (id, temp, co2, hum, ts) = await climateService.FetchLatestClimateData();
 
-                if (id != lastDataId && co2 >= CO2_THRESHOLD)
+                if (id != lastDataId)
                 {
                     lastDataId = id;
-                    string alertMessage = $"[{ts}] ⚠️ CO₂ level is {co2} ppm – please ventilate!";
-                    notifyIcon.BalloonTipText = alertMessage;
-                    notifyIcon.ShowBalloonTip(5000);
 
-                    alertHistory.Add(alertMessage);
-                    hasUnreadAlerts = true;
-                    UpdateAlertIcon();
-                }
-                else if (id != lastDataId)
-                {
-                    lastDataId = id;
+                    // Update de grafiek bij nieuwe data
+                    await FetchClimateData();
+
+                    if (co2 >= CO2_THRESHOLD)
+                    {
+                        string alertMessage = $"[{ts}] ⚠️ CO₂ level is {co2} ppm – please ventilate!";
+                        notifyIcon.BalloonTipText = alertMessage;
+                        notifyIcon.ShowBalloonTip(5000);
+
+                        alertHistory.Add(alertMessage);
+                        hasUnreadAlerts = true;
+                        UpdateAlertIcon();
+                    }
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Realtime update error: " + ex.Message);
+            }
         }
+
 
         // btnViewAlerts_Click
         private void btnViewAlerts_Click(object sender, EventArgs e)
@@ -1031,6 +1077,72 @@ namespace Home_assistant
                 loadingOverlay1.HideOverlay();
             }
         }
+
+        private async Task CheckForecastWarnings()
+        {
+            try
+            {
+                using (var httpClient = new HttpClient())
+                {
+                    var response = await httpClient.GetStringAsync("http://pi.local:8001/forecast");
+                    dynamic forecastData = JsonConvert.DeserializeObject(response);
+
+                    // [🔧] Normaal: gebruik vandaag
+                    //DateTime today = DateTime.Today;
+
+                    // [🧪] Voor testen met specifieke datum, de-comment:
+                     DateTime today = new DateTime(2025, 5, 29);
+
+                    foreach (var entry in forecastData)
+                    {
+                        DateTime forecastDate = DateTime.Parse(entry.ds.ToString()).Date;
+                        if (forecastDate == today)
+                        {
+                            double predCo2 = (double)entry.pred_co2;
+                            double predTemp = (double)entry.pred_temp;
+
+                            List<string> warnings = new List<string>();
+
+                            if (predCo2 >= 1000)
+                                warnings.Add($"🔴 Forecast: CO₂ may reach {Math.Round(predCo2)} ppm");
+
+                            if (predTemp >= 25)
+                                warnings.Add($"🔥 Forecast: Temperature may rise to {Math.Round(predTemp)}°C");
+
+                            if (warnings.Any())
+                            {
+                                string timestamp = DateTime.Now.ToString("HH:mm");
+                                string alertText = $"[{timestamp}] {string.Join(" | ", warnings)}";
+
+                                // Toon melding
+                                notifyIcon.BalloonTipTitle = "📊 Forecast Warning";
+                                notifyIcon.BalloonTipText = alertText + "\n👉 Prepare to ventilate or cool down.";
+                                notifyIcon.ShowBalloonTip(10000);
+
+                                // Voeg toe aan geschiedenis
+                                alertHistory.Add(alertText);
+                                hasUnreadAlerts = true;
+                                UpdateAlertIcon();
+
+                                // Als het alertpaneel open is, direct updaten
+                                if (panelAlertDropdown.Visible)
+                                {
+                                    lstAlerts.Items.Insert(0, alertText);
+                                }
+                            }
+
+                            break; // enkel eerste match vandaag
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("❌ Error during forecast check: " + ex.Message);
+            }
+        }
+
+
 
         private void loadingOverlay1_Load(object sender, EventArgs e)
         {

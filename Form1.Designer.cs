@@ -128,10 +128,10 @@ namespace Home_assistant
             // 
             this.tabCron.Controls.Add(this.cronTextBox);
             this.tabCron.Controls.Add(this.panel2);
-            this.tabCron.Location = new System.Drawing.Point(4, 25);
+            this.tabCron.Location = new System.Drawing.Point(4, 37);
             this.tabCron.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabCron.Name = "tabCron";
-            this.tabCron.Size = new System.Drawing.Size(1054, 524);
+            this.tabCron.Size = new System.Drawing.Size(1054, 512);
             this.tabCron.TabIndex = 3;
             this.tabCron.Text = "Cronjobs";
             this.tabCron.UseVisualStyleBackColor = true;
@@ -143,7 +143,7 @@ namespace Home_assistant
             this.cronTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.cronTextBox.Multiline = true;
             this.cronTextBox.Name = "cronTextBox";
-            this.cronTextBox.Size = new System.Drawing.Size(805, 524);
+            this.cronTextBox.Size = new System.Drawing.Size(805, 512);
             this.cronTextBox.TabIndex = 15;
             // 
             // panel2
@@ -155,7 +155,7 @@ namespace Home_assistant
             this.panel2.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.panel2.Name = "panel2";
             this.panel2.Padding = new System.Windows.Forms.Padding(11, 10, 11, 10);
-            this.panel2.Size = new System.Drawing.Size(249, 524);
+            this.panel2.Size = new System.Drawing.Size(249, 512);
             this.panel2.TabIndex = 14;
             // 
             // measure
@@ -195,11 +195,11 @@ namespace Home_assistant
             // tabChat
             // 
             this.tabChat.Controls.Add(this.layoutChatMain);
-            this.tabChat.Location = new System.Drawing.Point(4, 25);
+            this.tabChat.Location = new System.Drawing.Point(4, 37);
             this.tabChat.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabChat.Name = "tabChat";
             this.tabChat.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.tabChat.Size = new System.Drawing.Size(1054, 524);
+            this.tabChat.Size = new System.Drawing.Size(1054, 512);
             this.tabChat.TabIndex = 1;
             this.tabChat.Text = "Chat";
             this.tabChat.UseVisualStyleBackColor = true;
@@ -217,7 +217,7 @@ namespace Home_assistant
             this.layoutChatMain.RowCount = 2;
             this.layoutChatMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.layoutChatMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 70F));
-            this.layoutChatMain.Size = new System.Drawing.Size(1048, 520);
+            this.layoutChatMain.Size = new System.Drawing.Size(1048, 508);
             this.layoutChatMain.TabIndex = 1;
             // 
             // panelChatHistory
@@ -230,7 +230,7 @@ namespace Home_assistant
             this.panelChatHistory.Margin = new System.Windows.Forms.Padding(0);
             this.panelChatHistory.Name = "panelChatHistory";
             this.panelChatHistory.Padding = new System.Windows.Forms.Padding(10);
-            this.panelChatHistory.Size = new System.Drawing.Size(1048, 450);
+            this.panelChatHistory.Size = new System.Drawing.Size(1048, 438);
             this.panelChatHistory.TabIndex = 0;
             // 
             // txtChatHistory
@@ -244,7 +244,7 @@ namespace Home_assistant
             this.txtChatHistory.Name = "txtChatHistory";
             this.txtChatHistory.ReadOnly = true;
             this.txtChatHistory.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.txtChatHistory.Size = new System.Drawing.Size(1026, 428);
+            this.txtChatHistory.Size = new System.Drawing.Size(1026, 416);
             this.txtChatHistory.TabIndex = 0;
             this.txtChatHistory.Text = "";
             this.txtChatHistory.TextChanged += new System.EventHandler(this.txtChatHistory_TextChanged_1);
@@ -254,7 +254,7 @@ namespace Home_assistant
             this.panelChatInput.BackColor = System.Drawing.Color.White;
             this.panelChatInput.Controls.Add(this.layoutChatInput);
             this.panelChatInput.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelChatInput.Location = new System.Drawing.Point(0, 450);
+            this.panelChatInput.Location = new System.Drawing.Point(0, 438);
             this.panelChatInput.Margin = new System.Windows.Forms.Padding(0);
             this.panelChatInput.Name = "panelChatInput";
             this.panelChatInput.Padding = new System.Windows.Forms.Padding(10);
@@ -310,11 +310,11 @@ namespace Home_assistant
             // 
             this.tabClimate.Controls.Add(this.layoutMain);
             this.tabClimate.Controls.Add(this.chartTitle);
-            this.tabClimate.Location = new System.Drawing.Point(4, 25);
+            this.tabClimate.Location = new System.Drawing.Point(4, 37);
             this.tabClimate.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabClimate.Name = "tabClimate";
             this.tabClimate.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.tabClimate.Size = new System.Drawing.Size(1054, 524);
+            this.tabClimate.Size = new System.Drawing.Size(1054, 512);
             this.tabClimate.TabIndex = 0;
             this.tabClimate.Text = "Dashboard";
             this.tabClimate.UseVisualStyleBackColor = true;
@@ -332,8 +332,8 @@ namespace Home_assistant
             this.layoutMain.Name = "layoutMain";
             this.layoutMain.RowCount = 1;
             this.layoutMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.layoutMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 488F));
-            this.layoutMain.Size = new System.Drawing.Size(1048, 488);
+            this.layoutMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 476F));
+            this.layoutMain.Size = new System.Drawing.Size(1048, 476);
             this.layoutMain.TabIndex = 14;
             // 
             // panel1
@@ -345,7 +345,7 @@ namespace Home_assistant
             this.panel1.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.panel1.Name = "panel1";
             this.panel1.Padding = new System.Windows.Forms.Padding(10);
-            this.panel1.Size = new System.Drawing.Size(204, 474);
+            this.panel1.Size = new System.Drawing.Size(204, 462);
             this.panel1.TabIndex = 12;
             // 
             // layoutButtons
@@ -373,7 +373,7 @@ namespace Home_assistant
             this.layoutButtons.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28572F));
             this.layoutButtons.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.layoutButtons.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.layoutButtons.Size = new System.Drawing.Size(184, 454);
+            this.layoutButtons.Size = new System.Drawing.Size(184, 442);
             this.layoutButtons.TabIndex = 11;
             // 
             // btnTemperature
@@ -390,11 +390,11 @@ namespace Home_assistant
             this.btnTemperature.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnTemperature.ForeColor = System.Drawing.Color.Black;
             this.btnTemperature.HoverBackColor = System.Drawing.Color.AliceBlue;
-            this.btnTemperature.Location = new System.Drawing.Point(5, 69);
+            this.btnTemperature.Location = new System.Drawing.Point(5, 68);
             this.btnTemperature.Margin = new System.Windows.Forms.Padding(5);
             this.btnTemperature.Name = "btnTemperature";
             this.btnTemperature.Padding = new System.Windows.Forms.Padding(5);
-            this.btnTemperature.Size = new System.Drawing.Size(174, 54);
+            this.btnTemperature.Size = new System.Drawing.Size(174, 53);
             this.btnTemperature.TabIndex = 2;
             this.btnTemperature.Text = "🌡 Check Temp";
             this.btnTemperature.UseVisualStyleBackColor = false;
@@ -414,11 +414,11 @@ namespace Home_assistant
             this.btnGeneralAnalysis.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnGeneralAnalysis.ForeColor = System.Drawing.Color.White;
             this.btnGeneralAnalysis.HoverBackColor = System.Drawing.Color.MediumBlue;
-            this.btnGeneralAnalysis.Location = new System.Drawing.Point(5, 197);
+            this.btnGeneralAnalysis.Location = new System.Drawing.Point(5, 194);
             this.btnGeneralAnalysis.Margin = new System.Windows.Forms.Padding(5);
             this.btnGeneralAnalysis.Name = "btnGeneralAnalysis";
             this.btnGeneralAnalysis.Padding = new System.Windows.Forms.Padding(5);
-            this.btnGeneralAnalysis.Size = new System.Drawing.Size(174, 54);
+            this.btnGeneralAnalysis.Size = new System.Drawing.Size(174, 53);
             this.btnGeneralAnalysis.TabIndex = 8;
             this.btnGeneralAnalysis.Text = "🧠 Today\'s Advice";
             this.btnGeneralAnalysis.UseVisualStyleBackColor = false;
@@ -438,11 +438,11 @@ namespace Home_assistant
             this.btnForecastAdvice.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnForecastAdvice.ForeColor = System.Drawing.Color.White;
             this.btnForecastAdvice.HoverBackColor = System.Drawing.Color.MediumBlue;
-            this.btnForecastAdvice.Location = new System.Drawing.Point(5, 261);
+            this.btnForecastAdvice.Location = new System.Drawing.Point(5, 257);
             this.btnForecastAdvice.Margin = new System.Windows.Forms.Padding(5);
             this.btnForecastAdvice.Name = "btnForecastAdvice";
             this.btnForecastAdvice.Padding = new System.Windows.Forms.Padding(5);
-            this.btnForecastAdvice.Size = new System.Drawing.Size(174, 54);
+            this.btnForecastAdvice.Size = new System.Drawing.Size(174, 53);
             this.btnForecastAdvice.TabIndex = 7;
             this.btnForecastAdvice.Text = "📈 Forecast";
             this.btnForecastAdvice.UseVisualStyleBackColor = false;
@@ -462,11 +462,11 @@ namespace Home_assistant
             this.bttnweatherTomorrow.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.bttnweatherTomorrow.ForeColor = System.Drawing.Color.Black;
             this.bttnweatherTomorrow.HoverBackColor = System.Drawing.Color.LightGoldenrodYellow;
-            this.bttnweatherTomorrow.Location = new System.Drawing.Point(5, 389);
+            this.bttnweatherTomorrow.Location = new System.Drawing.Point(5, 383);
             this.bttnweatherTomorrow.Margin = new System.Windows.Forms.Padding(5);
             this.bttnweatherTomorrow.Name = "bttnweatherTomorrow";
             this.bttnweatherTomorrow.Padding = new System.Windows.Forms.Padding(5);
-            this.bttnweatherTomorrow.Size = new System.Drawing.Size(174, 60);
+            this.bttnweatherTomorrow.Size = new System.Drawing.Size(174, 54);
             this.bttnweatherTomorrow.TabIndex = 10;
             this.bttnweatherTomorrow.Text = "🌤 Weather Tom";
             this.bttnweatherTomorrow.UseVisualStyleBackColor = false;
@@ -486,11 +486,11 @@ namespace Home_assistant
             this.bttnweatherToday.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.bttnweatherToday.ForeColor = System.Drawing.Color.Black;
             this.bttnweatherToday.HoverBackColor = System.Drawing.Color.LightGoldenrodYellow;
-            this.bttnweatherToday.Location = new System.Drawing.Point(5, 325);
+            this.bttnweatherToday.Location = new System.Drawing.Point(5, 320);
             this.bttnweatherToday.Margin = new System.Windows.Forms.Padding(5);
             this.bttnweatherToday.Name = "bttnweatherToday";
             this.bttnweatherToday.Padding = new System.Windows.Forms.Padding(5);
-            this.bttnweatherToday.Size = new System.Drawing.Size(174, 54);
+            this.bttnweatherToday.Size = new System.Drawing.Size(174, 53);
             this.bttnweatherToday.TabIndex = 9;
             this.bttnweatherToday.Text = "☀️ Weather Tod";
             this.bttnweatherToday.UseVisualStyleBackColor = false;
@@ -510,11 +510,11 @@ namespace Home_assistant
             this.btnHumidity.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnHumidity.ForeColor = System.Drawing.Color.Black;
             this.btnHumidity.HoverBackColor = System.Drawing.Color.AliceBlue;
-            this.btnHumidity.Location = new System.Drawing.Point(5, 133);
+            this.btnHumidity.Location = new System.Drawing.Point(5, 131);
             this.btnHumidity.Margin = new System.Windows.Forms.Padding(5);
             this.btnHumidity.Name = "btnHumidity";
             this.btnHumidity.Padding = new System.Windows.Forms.Padding(5);
-            this.btnHumidity.Size = new System.Drawing.Size(174, 54);
+            this.btnHumidity.Size = new System.Drawing.Size(174, 53);
             this.btnHumidity.TabIndex = 4;
             this.btnHumidity.Text = "💧 Check Hum";
             this.btnHumidity.UseVisualStyleBackColor = false;
@@ -538,7 +538,7 @@ namespace Home_assistant
             this.btnAirQuality.Margin = new System.Windows.Forms.Padding(5);
             this.btnAirQuality.Name = "btnAirQuality";
             this.btnAirQuality.Padding = new System.Windows.Forms.Padding(5);
-            this.btnAirQuality.Size = new System.Drawing.Size(174, 54);
+            this.btnAirQuality.Size = new System.Drawing.Size(174, 53);
             this.btnAirQuality.TabIndex = 15;
             this.btnAirQuality.Text = "🌬 Check CO₂";
             this.btnAirQuality.UseVisualStyleBackColor = false;
@@ -554,7 +554,7 @@ namespace Home_assistant
             this.panelChartContainer.Location = new System.Drawing.Point(223, 3);
             this.panelChartContainer.Name = "panelChartContainer";
             this.panelChartContainer.Padding = new System.Windows.Forms.Padding(15);
-            this.panelChartContainer.Size = new System.Drawing.Size(822, 482);
+            this.panelChartContainer.Size = new System.Drawing.Size(822, 470);
             this.panelChartContainer.TabIndex = 0;
             // 
             // labelLoading
@@ -577,7 +577,7 @@ namespace Home_assistant
             this.chartClimate.Location = new System.Drawing.Point(15, 15);
             this.chartClimate.Margin = new System.Windows.Forms.Padding(0);
             this.chartClimate.Name = "chartClimate";
-            this.chartClimate.Size = new System.Drawing.Size(790, 450);
+            this.chartClimate.Size = new System.Drawing.Size(790, 438);
             this.chartClimate.TabIndex = 13;
             // 
             // chartTitle
@@ -600,6 +600,7 @@ namespace Home_assistant
             this.tabControl1.Controls.Add(this.tabChat);
             this.tabControl1.Controls.Add(this.tabCron);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabControl1.Name = "tabControl1";
